@@ -89,6 +89,9 @@ Enregistrer
 let agents =
 JSON.parse(localStorage.getItem("agents")) || [];
 
+let examens =
+JSON.parse(localStorage.getItem("examens")) || [];
+
 function sauvegarder(){
 localStorage.setItem(
 "agents",
@@ -119,11 +122,29 @@ function ajouterExamen(){
 const nom =
 document.getElementById("examinateur").value;
 
+const candidat =
+document.getElementById("candidat").value;
+
 const agent =
-agents.find(a => a.nom===nom);
+agents.find(a => a.nom === nom);
 
 if(agent){
+
 agent.examens++;
+
+examens.push({
+date:new Date().toLocaleDateString(),
+examinateur:nom,
+candidat:candidat
+});
+
+localStorage.setItem(
+"examens",
+JSON.stringify(examens)
+);
+}
+
+sauvegarder();
 }
 
 sauvegarder();
