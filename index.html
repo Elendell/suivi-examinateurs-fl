@@ -54,7 +54,9 @@ background:#005ea1;
 <div class="card">
 <h2>Enregistrer un examen</h2>
 <select id="examinateur"></select>
-<input id="candidat" placeholder="Nom du candidat">
+<input id="agentMatricule" placeholder="Matricule">
+
+<input id="agentIdDiscord" placeholder="Identifiant Discord">
 <button onclick="ajouterExamen()">Enregistrer</button>
 </div>
 
@@ -74,7 +76,8 @@ background:#005ea1;
 <table id="tableAgents" style="width:100%; border-collapse:collapse;">
 <thead>
 <tr>
-<th style="text-align:left;">Nom</th>
+<th style="text-align:left;">Matricule</th>
+<th style="text-align:left;">Discord</th>
 <th style="text-align:left;">Examens</th>
 <th style="text-align:left;">Dernier examen</th>
 <th style="text-align:left;">Statut</th>
@@ -119,18 +122,23 @@ function sauvegarder() {
 
 function ajouterAgent() {
 
-    const nom =
-    document.getElementById("agentNom").value.trim();
+    const matricule =
+    document.getElementById("agentMatricule").value.trim();
 
-    if(!nom) return;
+    const discord =
+    document.getElementById("agentDiscord").value.trim();
+
+    if(!matricule) return;
 
     agents.push({
-        nom: nom,
+        matricule: matricule,
+        discord: discord,
         examens: 0,
         dernierExamen: null
     });
 
-    document.getElementById("agentNom").value = "";
+    document.getElementById("agentMatricule").value = "";
+    document.getElementById("agentDiscord").value = "";
 
     sauvegarder();
 }
@@ -144,7 +152,7 @@ function ajouterExamen() {
     document.getElementById("candidat").value;
 
     const agent =
-    agents.find(a => a.nom === nom);
+    agents.find(a => a.matricule === nom);
 
     if(!agent) return;
 
@@ -182,7 +190,8 @@ if(a.examens === 0){
 
 liste.innerHTML += `
 <tr>
-    <td>${a.nom}</td>
+    <td>${a.matricule}</td>
+    <td>${a.discord || "-"}</td>
     <td>${a.examens}</td>
     <td>${a.dernierExamen || "Jamais"}</td>
     <td>${statut}</td>
@@ -195,7 +204,7 @@ liste.innerHTML += `
 `;
 
         select.innerHTML += `
-            <option>${a.nom}</option>
+            <option>${a.matricule}</option>
         `;
     });
 
