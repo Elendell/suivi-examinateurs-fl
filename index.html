@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi Examinateurs FL</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f4f4f4;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:5px 0;
+}
+
+button{
+padding:10px 20px;
+background:#0078d4;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+button:hover{
+background:#005ea1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Suivi Examinateurs FL</h1>
+
+<div class="card">
+<h2>Ajouter un examinateur</h2>
+
+<input id="agentNom" placeholder="Nom de l'agent">
+
+<button onclick="ajouterAgent()">
+Ajouter
+</button>
+</div>
+
+<div class="card">
+<h2>Enregistrer un examen</h2>
+
+<select id="examinateur"></select>
+
+<input id="candidat" placeholder="Nom du candidat">
+
+<button onclick="ajouterExamen()">
+Enregistrer
+</button>
+</div>
+
+<div class="card">
+<h2>Statistiques</h2>
+
+<div id="stats"></div>
+</div>
+
+<div class="card">
+<h2>Suggestions automatiques</h2>
+
+<div id="suggestions"></div>
+</div>
+
+<div class="card">
+<h2>Examinateurs</h2>
+
+<div id="agents"></div>
+</div>
+
+<script>
+
+let agents =
+JSON.parse(localStorage.getItem("agents")) || [];
+
+function sauvegarder(){
+localStorage.setItem(
+"agents",
+JSON.stringify(agents)
+);
+afficher();
+}
+
+function ajouterAgent(){
+
+const nom =
+document.getElementById("agentNom").value;
+
+if(!nom) return;
+
+agents.push({
+nom,
+examens:0
+});
+
+document.getElementById("agentNom").value="";
+
+sauvegarder();
+}
+
+function ajouterExamen(){
+
+const nom =
+document.getElementById("examinateur").value;
+
+const agent =
+agents.find(a => a.nom===nom);
+
+if(agent){
+agent.examens++;
+}
+
+sauvegarder();
+}
+
+function afficher(){
+
+const liste =
+document.getElementById("agents");
+
+const select =
+document.getElementById("examinateur");
+
+liste.innerHTML="";
+select.innerHTML="";
+
+agents.forEach(a => {
+
+liste.innerHTML +=
+`<p>${a.nom} : ${a.examens} examen(s)</p>`;
+
+select.innerHTML +=
+`<option>${a.nom}</option>`;
+});
+
+document.getElementById("stats").innerHTML=
+`
+Total examinateurs : ${agents.length}<br>
+Total examens : ${
+agents.reduce((t,a)=>t+a.examens,0)
+}
+`;
+
+const recommandations =
+[...agents]
+.sort((a,b)=>a.examens-b.examens)
+.slice(0,3);
+
+document.getElementById("suggestions").innerHTML=
+recommandations.map(
+(a,i)=>`<p>#${i+1} ${a.nom} (${a.examens})</p>`
+).join("");
+}
+
+afficher();
+
+</script>
+
+</body>
+</html>
