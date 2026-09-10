@@ -24,6 +24,7 @@ input,select{
 width:100%;
 padding:10px;
 margin:5px 0;
+box-sizing:border-box;
 }
 
 button{
@@ -46,47 +47,34 @@ background:#005ea1;
 
 <div class="card">
 <h2>Ajouter un examinateur</h2>
-
 <input id="agentNom" placeholder="Nom de l'agent">
-
-<button onclick="ajouterAgent()">
-Ajouter
-</button>
+<button onclick="ajouterAgent()">Ajouter</button>
 </div>
 
 <div class="card">
 <h2>Enregistrer un examen</h2>
-
 <select id="examinateur"></select>
-
 <input id="candidat" placeholder="Nom du candidat">
-
-<button onclick="ajouterExamen()">
-Enregistrer
-</button>
+<button onclick="ajouterExamen()">Enregistrer</button>
 </div>
 
 <div class="card">
 <h2>Statistiques</h2>
-
 <div id="stats"></div>
 </div>
 
 <div class="card">
 <h2>Suggestions automatiques</h2>
-
 <div id="suggestions"></div>
 </div>
 
 <div class="card">
 <h2>Examinateurs</h2>
-
 <div id="agents"></div>
 </div>
 
 <div class="card">
 <h2>Historique des examens</h2>
-
 <div id="historique"></div>
 </div>
 
@@ -98,111 +86,101 @@ JSON.parse(localStorage.getItem("agents")) || [];
 let examens =
 JSON.parse(localStorage.getItem("examens")) || [];
 
-function sauvegarder(){
-localStorage.setItem(
-"agents",
-JSON.stringify(agents)
-);
-afficher();
+function sauvegarder() {
+    localStorage.setItem("agents", JSON.stringify(agents));
+    localStorage.setItem("examens", JSON.stringify(examens));
+    afficher();
 }
 
-function ajouterAgent(){
+function ajouterAgent() {
 
-const nom =
-document.getElementById("agentNom").value;
+    const nom =
+    document.getElementById("agentNom").value.trim();
 
-if(!nom) return;
+    if(!nom) return;
 
-agents.push({
-nom,
-examens:0
-});
+    agents.push({
+        nom: nom,
+        examens: 0
+    });
 
-document.getElementById("agentNom").value="";
+    document.getElementById("agentNom").value = "";
 
-sauvegarder();
+    sauvegarder();
 }
 
-function ajouterExamen(){
+function ajouterExamen() {
 
-const nom =
-document.getElementById("examinateur").value;
+    const nom =
+    document.getElementById("examinateur").value;
 
-const candidat =
-document.getElementById("candidat").value;
+    const candidat =
+    document.getElementById("candidat").value;
 
-const agent =
-agents.find(a => a.nom === nom);
+    const agent =
+    agents.find(a => a.nom === nom);
 
-if(agent){
+    if(!agent) return;
 
-agent.examens++;
+    agent.examens++;
 
-examens.push({
-date:new Date().toLocaleDateString(),
-examinateur:nom,
-candidat:candidat
-});
+    examens.push({
+        date: new Date().toLocaleDateString(),
+        examinateur: nom,
+        candidat: candidat
+    });
 
-localStorage.setItem(
-"examens",
-JSON.stringify(examens)
-);
+    document.getElementById("candidat").value = "";
+
+    sauvegarder();
 }
 
-sauvegarder();
-}
+function afficher() {
 
-function afficher(){
+    const liste =
+    document.getElementById("agents");
 
-const liste =
-document.getElementById("agents");
+    const select =
+    document.getElementById("examinateur");
 
-const select =
-document.getElementById("examinateur");
+    liste.innerHTML = "";
+    select.innerHTML = "";
 
-liste.innerHTML="";
-select.innerHTML="";
+    agents.forEach(a => {
 
-agents.forEach(a => {
+        liste.innerHTML +=
+        `<p>${a.nom} : ${a.examens} examen(s)</p>`;
 
-liste.innerHTML +=
-`<p>${a.nom} : ${a.examens} examen(s)</p>`;
+        select.innerHTML +=
+        `<option>${a.nom}</option>`;
+    });
 
-select.innerHTML +=
-`<option>${a.nom}</option>`;
+    document.getElementById("stats").innerHTML =
+    `
+    Total examinateurs : ${agents.length}<br>
+    Total examens : ${agents.reduce((t,a)=>t+a.examens,0)}
+    `;
 
-});
+    const recommandations =
+    [...agents]
+    .sort((a,b)=>a.examens-b.examens)
+    .slice(0,3);
 
-document.getElementById("stats").innerHTML=
-`
-Total examinateurs : ${agents.length}<br>
-Total examens : ${
-agents.reduce((t,a)=>t+a.examens,0)
-}
-`;
+    document.getElementById("suggestions").innerHTML =
+    recommandations
+    .map((a,i)=>
+        `<p>#${i+1} ${a.nom} (${a.examens})</p>`
+    )
+    .join("");
 
-const recommandations =
-[...agents]
-.sort((a,b)=>a.examens-b.examens)
-.slice(0,3);
-
-document.getElementById("suggestions").innerHTML=
-recommandations
-.map(
-(a,i)=>`<p>#${i+1} ${a.nom} (${a.examens})</p>`
-)
-.join("");
-
-document.getElementById("historique").innerHTML =
-examens
-.slice()
-.reverse()
-.map(e =>
-`<p>${e.date} - ${e.examinateur} → ${e.candidat}</p>`
-)
-.join("");
-
+    document.getElementById("historique").innerHTML =
+    examens
+    .slice()
+    .reverse()
+    .map(e =>
+        `<p>${e.date} - ${e.examinateur} → ${e.candidat}</p>`
+    )
+    .join("");
 }
 
 afficher();
