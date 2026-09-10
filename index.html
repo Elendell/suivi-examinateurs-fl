@@ -213,17 +213,6 @@ function afficher() {
     }
 }
 
-document.getElementById("surveillance").innerHTML =
-agentsASurveiller.length
-?
-agentsASurveiller.map(a =>
-`<p>⚠️ ${a.nom} - Dernier examen : ${a.dernierExamen || "Jamais"}</p>`
-).join("")
-:
-"<p>✅ Aucun examinateur à surveiller</p>";
-        
-    });
-
     document.getElementById("stats").innerHTML =
     `
     Total examinateurs : ${agents.length}<br>
