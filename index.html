@@ -70,7 +70,22 @@ background:#005ea1;
 
 <div class="card">
 <h2>Examinateurs</h2>
-<div id="agents"></div>
+
+<table id="tableAgents" style="width:100%; border-collapse:collapse;">
+<thead>
+<tr>
+<th style="text-align:left;">Nom</th>
+<th style="text-align:left;">Examens</th>
+<th style="text-align:left;">Dernier examen</th>
+<th style="text-align:left;">Statut</th>
+<th style="text-align:left;">Action</th>
+</tr>
+</thead>
+
+<tbody id="agents">
+</tbody>
+
+</table>
 </div>
 
 <div class="card">
@@ -159,17 +174,25 @@ function afficher() {
 
     agents.forEach(a => {
 
-        liste.innerHTML += `
-            <p>
-                <b>${a.nom}</b><br>
-                Examens : ${a.examens}<br>
-                Dernier examen : ${a.dernierExamen || "Jamais"}<br>
+let statut = "🟢 Actif";
 
-                <button onclick="supprimerAgent('${a.nom}')">
-                    Supprimer
-                </button>
-            </p>
-        `;
+if(a.examens === 0){
+    statut = "🔴 Inactif";
+}
+
+liste.innerHTML += `
+<tr>
+    <td>${a.nom}</td>
+    <td>${a.examens}</td>
+    <td>${a.dernierExamen || "Jamais"}</td>
+    <td>${statut}</td>
+    <td>
+        <button onclick="supprimerAgent('${a.nom}')">
+            Supprimer
+        </button>
+    </td>
+</tr>
+`;
 
         select.innerHTML += `
             <option>${a.nom}</option>
