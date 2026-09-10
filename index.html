@@ -107,6 +107,7 @@ function ajouterAgent() {
     agents.push({
         nom: nom,
         examens: 0
+        dernierExamen: null
     });
 
     document.getElementById("agentNom").value = "";
@@ -128,6 +129,9 @@ function ajouterExamen() {
     if(!agent) return;
 
     agent.examens++;
+    
+    agent.dernierExamen =
+    new Date().toLocaleDateString();
 
     examens.push({
         date: new Date().toLocaleDateString(),
@@ -153,8 +157,14 @@ function afficher() {
 
     agents.forEach(a => {
 
-        liste.innerHTML +=
-        `<p>${a.nom} : ${a.examens} examen(s)</p>`;
+       liste.innerHTML +=
+           `
+           <p>
+           <b>${a.nom}</b><br>
+           Examens : ${a.examens}<br>
+           Dernier examen : ${a.dernierExamen || "Jamais"}
+           </p>
+           `;
 
         select.innerHTML +=
         `<option>${a.nom}</option>`;
