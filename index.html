@@ -78,6 +78,14 @@ background:#005ea1;
 <div id="historique"></div>
 </div>
 
+<div class="card">
+2
+<h2>Examinateurs inactifs</h2>
+3
+<div id="inactifs"></div>
+4
+</div>
+
 <script>
 
 let agents =
@@ -181,6 +189,15 @@ function afficher() {
         `<p>${e.date} - ${e.examinateur} → ${e.candidat}</p>`
     )
     .join("");
+    const inactifs =
+agents.filter(a => a.examens === 0);
+
+document.getElementById("inactifs").innerHTML =
+inactifs.length
+? inactifs.map(a =>
+`<p>🔴 ${a.nom}</p>`
+).join("")
+: "<p>✅ Aucun examinateur inactif</p>";
 }
 
 afficher();
