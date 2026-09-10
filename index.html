@@ -230,27 +230,27 @@ agentsASurveiller.map(a =>
     Total examens : ${agents.reduce((t,a)=>t+a.examens,0)}
     `;
 
-   const recommandations =
-       [...agents]
-       .sort((a,b)=>{
-           
-           if(!a.dernierExamen) return -1;
-           if(!b.dernierExamen) return 1;
-           
-           const dateA =
-            new Date(
-            a.dernierExamen.split("/").reverse().join("-")
-            );
-           
-           const dateB =
-            new Date(
-            b.dernierExamen.split("/").reverse().join("-")
-            );
-           
-           return dateA - dateB;
-       
-       })
-       .slice(0,3);
+const recommandations =
+[...agents]
+.sort((a,b)=>{
+
+if(!a.dernierExamen) return -1;
+if(!b.dernierExamen) return 1;
+
+const dateA =
+new Date(
+a.dernierExamen.split("/").reverse().join("-")
+);
+
+const dateB =
+new Date(
+b.dernierExamen.split("/").reverse().join("-")
+);
+
+return dateA - dateB;
+
+})
+.slice(0,3);
 
 document.getElementById("suggestions").innerHTML =
 recommandations
