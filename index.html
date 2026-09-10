@@ -164,6 +164,11 @@ function afficher() {
            <b>${a.nom}</b><br>
            Examens : ${a.examens}<br>
            Dernier examen : ${a.dernierExamen || "Jamais"}
+           
+           <button onclick="supprimerAgent('${a.nom}')">
+           Supprimer
+           </button>
+           
            </p>
            `;
 
@@ -206,6 +211,17 @@ inactifs.length
 `<p>🔴 ${a.nom}</p>`
 ).join("")
 : "<p>✅ Aucun examinateur inactif</p>";
+}
+
+function supprimerAgent(nom){
+
+if(!confirm("Supprimer " + nom + " ?"))
+return;
+
+agents =
+agents.filter(a => a.nom !== nom);
+
+sauvegarder();
 }
 
 afficher();
