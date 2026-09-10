@@ -151,56 +151,67 @@ function ajouterExamen() {
 }
 
 function afficher() {
-
-    const liste =
-    document.getElementById("agents");
-
-    const select =
-    document.getElementById("examinateur");
+    const liste = document.getElementById("agents");
+    const select = document.getElementById("examinateur");
 
     liste.innerHTML = "";
     select.innerHTML = "";
 
     agents.forEach(a => {
 
-       liste.innerHTML +=
-           `
-           <p>
-           <b>${a.nom}</b><br>
-           Examens : ${a.examens}<br>
-           Dernier examen : ${a.dernierExamen || "Jamais"}
-           
-           <button onclick="supprimerAgent('${a.nom}')">
-           Supprimer
-           </button>
-           
-           </p>
-           `;
+        liste.innerHTML += `
+            <p>
+                <b>${a.nom}</b><br>
+                Examens : ${a.examens}<br>
+                Dernier examen : ${a.dernierExamen || "Jamais"}<br>
 
-        select.innerHTML +=
-        `<option>${a.nom}</option>`;
+                <button onclick="supprimerAgent('${a.nom}')">
+                    Supprimer
+                </button>
+            </p>
+        `;
 
-        const agentsASurveiller =
-agents.filter(a => {
+        select.innerHTML += `
+            <option>${a.nom}</option>
+        `;
+    });
 
-if(!a.dernierExamen)
-return true;
+    const agentsASurveiller = agents.filter(a => {
 
-const aujourdHui = new Date();
+        if (!a.dernierExamen) {
+            return true;
+        }
 
-const dernier = new Date(
-a.dernierExamen.split("/").reverse().join("-")
-);
+        const aujourdHui = new Date();
 
-const difference =
-Math.floor(
-(aujourdHui - dernier) /
-(1000 * 60 * 60 * 24)
-);
+        const dernier = new Date(
+            a.dernierExamen.split("/").reverse().join("-")
+        );
 
-return difference > 15;
+        const difference = Math.floor(
+            (aujourdHui - dernier) /
+            (1000 * 60 * 60 * 24)
+        );
 
-});
+        return difference > 15;
+
+    });
+
+    const surveillance = document.getElementById("surveillance");
+
+    if (surveillance) {
+        surveillance.innerHTML = "";
+
+        agentsASurveiller.forEach(a => {
+            surveillance.innerHTML += `
+                <p>
+                    ⚠️ <b>${a.nom}</b>
+                    (${a.dernierExamen || "Aucun examen"})
+                </p>
+            `;
+        });
+    }
+}
 
 document.getElementById("surveillance").innerHTML =
 agentsASurveiller.length
