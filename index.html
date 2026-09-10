@@ -84,6 +84,12 @@ Enregistrer
 <div id="agents"></div>
 </div>
 
+<div class="card">
+<h2>Historique des examens</h2>
+
+<div id="historique"></div>
+</div>
+
 <script>
 
 let agents =
@@ -188,6 +194,15 @@ recommandations.map(
 (a,i)=>`<p>#${i+1} ${a.nom} (${a.examens})</p>`
 ).join("");
 }
+
+document.getElementById("historique").innerHTML =
+examens
+.slice()
+.reverse()
+.map(e =>
+`<p>${e.date} - ${e.examinateur} → ${e.candidat}</p>`
+)
+.join("");
 
 afficher();
 
