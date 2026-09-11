@@ -1,87 +1,139 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Suivi Examinateurs FL</title>
 
 <style>
+
 body{
-font-family:Arial,sans-serif;
-background:#f4f4f4;
-padding:20px;
+    font-family:Arial,sans-serif;
+    background:#f4f4f4;
+    padding:20px;
 }
 
 .card{
-background:white;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.1);
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
 }
 
-input,select{
-width:100%;
-padding:10px;
-margin:5px 0;
-box-sizing:border-box;
+input,
+select,
+textarea{
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    box-sizing:border-box;
 }
 
 button{
-padding:10px 20px;
-background:#0078d4;
-color:white;
-border:none;
-cursor:pointer;
+    padding:10px 15px;
+    background:#0078d4;
+    color:white;
+    border:none;
+    cursor:pointer;
 }
 
 button:hover{
-background:#005ea1;
+    background:#005ea1;
 }
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+.stat{
+    margin:5px 0;
+    font-weight:bold;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Suivi Examinateurs FL</h1>
+<h1>🎓 Suivi Examinateurs FL</h1>
 
 <div class="card">
+
 <h2>Ajouter un examinateur</h2>
-<input id="agentNom" placeholder="Nom de l'agent">
-<button onclick="ajouterAgent()">Ajouter</button>
+
+<input
+id="agentMatricule"
+placeholder="Matricule">
+
+<input
+id="agentDiscord"
+placeholder="Identifiant Discord">
+
+<button onclick="ajouterAgent()">
+Ajouter
+</button>
+
 </div>
 
 <div class="card">
+
 <h2>Enregistrer un examen</h2>
+
 <select id="examinateur"></select>
-<input id="agentMatricule" placeholder="Matricule">
 
-<input id="agentIdDiscord" placeholder="Identifiant Discord">
-<button onclick="ajouterExamen()">Enregistrer</button>
+<input
+id="candidat"
+placeholder="Nom du candidat">
+
+<textarea
+id="commentaire"
+placeholder="Commentaire"></textarea>
+
+<button onclick="ajouterExamen()">
+Enregistrer
+</button>
+
 </div>
 
 <div class="card">
-<h2>Statistiques</h2>
+
+<h2>📊 Statistiques</h2>
+
 <div id="stats"></div>
+
 </div>
 
 <div class="card">
-<h2>Suggestions automatiques</h2>
+
+<h2>🤖 Suggestions automatiques</h2>
+
 <div id="suggestions"></div>
+
 </div>
 
 <div class="card">
-<h2>Examinateurs</h2>
 
-<table id="tableAgents" style="width:100%; border-collapse:collapse;">
+<h2>👮 Examinateurs</h2>
+
+<table>
+
 <thead>
 <tr>
-<th style="text-align:left;">Matricule</th>
-<th style="text-align:left;">Discord</th>
-<th style="text-align:left;">Examens</th>
-<th style="text-align:left;">Dernier examen</th>
-<th style="text-align:left;">Statut</th>
-<th style="text-align:left;">Action</th>
+<th>Matricule</th>
+<th>Discord</th>
+<th>Examens</th>
+<th>Dernier examen</th>
+<th>Statut</th>
+<th>Action</th>
 </tr>
 </thead>
 
@@ -89,21 +141,31 @@ background:#005ea1;
 </tbody>
 
 </table>
+
 </div>
 
 <div class="card">
-<h2>Historique des examens</h2>
-<div id="historique"></div>
-</div>
 
-<div class="card">
-<h2>Examinateurs inactifs</h2>
+<h2>🔴 Examinateurs inactifs</h2>
+
 <div id="inactifs"></div>
+
 </div>
 
 <div class="card">
+
 <h2>⚠️ Examinateurs à surveiller</h2>
+
 <div id="surveillance"></div>
+
+</div>
+
+<div class="card">
+
+<h2>📜 Historique des examens</h2>
+
+<div id="historique"></div>
+
 </div>
 
 <script>
@@ -114,13 +176,22 @@ JSON.parse(localStorage.getItem("agents")) || [];
 let examens =
 JSON.parse(localStorage.getItem("examens")) || [];
 
-function sauvegarder() {
-    localStorage.setItem("agents", JSON.stringify(agents));
-    localStorage.setItem("examens", JSON.stringify(examens));
+function sauvegarder(){
+
+    localStorage.setItem(
+        "agents",
+        JSON.stringify(agents)
+    );
+
+    localStorage.setItem(
+        "examens",
+        JSON.stringify(examens)
+    );
+
     afficher();
 }
 
-function ajouterAgent() {
+function ajouterAgent(){
 
     const matricule =
     document.getElementById("agentMatricule").value.trim();
@@ -128,192 +199,349 @@ function ajouterAgent() {
     const discord =
     document.getElementById("agentDiscord").value.trim();
 
-    if(!matricule) return;
+    if(!matricule){
+        alert("Le matricule est obligatoire");
+        return;
+    }
 
     agents.push({
-        matricule: matricule,
-        discord: discord,
-        examens: 0,
-        dernierExamen: null
+        matricule,
+        discord,
+        examens:0,
+        dernierExamen:null
     });
 
-    document.getElementById("agentMatricule").value = "";
-    document.getElementById("agentDiscord").value = "";
+    document.getElementById(
+        "agentMatricule"
+    ).value = "";
+
+    document.getElementById(
+        "agentDiscord"
+    ).value = "";
 
     sauvegarder();
 }
 
-function ajouterExamen() {
+function ajouterExamen(){
 
-    const nom =
-    document.getElementById("examinateur").value;
+    const cible =
+    document.getElementById(
+        "examinateur"
+    ).value;
 
     const candidat =
-    document.getElementById("candidat").value;
+    document.getElementById(
+        "candidat"
+    ).value;
+
+    const commentaire =
+    document.getElementById(
+        "commentaire"
+    ).value;
 
     const agent =
-    agents.find(a => a.matricule === nom);
+    agents.find(
+        a => a.matricule === cible
+    );
 
-    if(!agent) return;
+    if(!agent){
+        return;
+    }
+
+    const date =
+    new Date().toLocaleDateString();
 
     agent.examens++;
-    
+
     agent.dernierExamen =
-    new Date().toLocaleDateString();
-    ``
+    date;
 
     examens.push({
-        date: new Date().toLocaleDateString(),
-        examinateur: nom,
-        candidat: candidat
+
+        date:date,
+
+        examinateur:
+        agent.matricule,
+
+        discord:
+        agent.discord,
+
+        candidat:
+        candidat,
+
+        commentaire:
+        commentaire
+
     });
 
-    document.getElementById("candidat").value = "";
+    document.getElementById(
+        "candidat"
+    ).value = "";
+
+    document.getElementById(
+        "commentaire"
+    ).value = "";
 
     sauvegarder();
 }
 
-function afficher() {
-    const liste = document.getElementById("agents");
-    const select = document.getElementById("examinateur");
+function supprimerAgent(matricule){
+
+    if(
+        !confirm(
+            "Supprimer " + matricule + " ?"
+        )
+    ){
+        return;
+    }
+
+    agents =
+    agents.filter(
+        a => a.matricule !== matricule
+    );
+
+    sauvegarder();
+}
+
+function afficher(){
+
+    const liste =
+    document.getElementById("agents");
+
+    const select =
+    document.getElementById("examinateur");
 
     liste.innerHTML = "";
     select.innerHTML = "";
 
     agents.forEach(a => {
 
-let statut = "🟢 Actif";
+        let statut = "🟢 Actif";
 
-if(a.examens === 0){
-    statut = "🔴 Inactif";
-}
+        if(a.examens === 0){
+            statut = "🔴 Inactif";
+        }
 
-liste.innerHTML += `
-<tr>
-    <td>${a.matricule}</td>
-    <td>${a.discord || "-"}</td>
-    <td>${a.examens}</td>
-    <td>${a.dernierExamen || "Jamais"}</td>
-    <td>${statut}</td>
-    <td>
-        <button onclick="supprimerAgent('${a.nom}')">
+        liste.innerHTML += `
+
+        <tr>
+
+            <td>${a.matricule}</td>
+
+            <td>${a.discord || "-"}</td>
+
+            <td>${a.examens}</td>
+
+            <td>
+            ${a.dernierExamen || "Jamais"}
+            </td>
+
+            <td>${statut}</td>
+
+            <td>
+
+            <button
+            onclick="supprimerAgent('${a.matricule}')">
+
             Supprimer
-        </button>
-    </td>
-</tr>
-`;
 
-        select.innerHTML += `
-            <option>${a.matricule}</option>
+            </button>
+
+            </td>
+
+        </tr>
+
         `;
+
+        select.innerHTML +=
+        `<option>${a.matricule}</option>`;
+
     });
 
-    const agentsASurveiller = agents.filter(a => {
+    const totalExamens =
+    agents.reduce(
+        (t,a)=>t+a.examens,
+        0
+    );
 
-        if (!a.dernierExamen) {
+    const inactifs =
+    agents.filter(
+        a => a.examens === 0
+    );
+
+    document.getElementById(
+        "stats"
+    ).innerHTML = `
+
+    <div class="stat">
+    👮 Examinateurs : ${agents.length}
+    </div>
+
+    <div class="stat">
+    📄 Examens : ${totalExamens}
+    </div>
+
+    <div class="stat">
+    🔴 Inactifs : ${inactifs.length}
+    </div>
+
+    `;
+
+    document.getElementById(
+        "inactifs"
+    ).innerHTML =
+
+    inactifs.length
+
+    ?
+
+    inactifs.map(a =>
+    `<p>🔴 ${a.matricule}</p>`
+    ).join("")
+
+    :
+
+    "<p>✅ Aucun</p>";
+
+    const agentsASurveiller =
+    agents.filter(a => {
+
+        if(!a.dernierExamen){
             return true;
         }
 
-        const aujourdHui = new Date();
+        const aujourdHui =
+        new Date();
 
-        const dernier = new Date(
-            a.dernierExamen.split("/").reverse().join("-")
+        const dernier =
+        new Date(
+            a.dernierExamen
+            .split("/")
+            .reverse()
+            .join("-")
         );
 
-        const difference = Math.floor(
-            (aujourdHui - dernier) /
-            (1000 * 60 * 60 * 24)
+        const jours =
+        Math.floor(
+            (aujourdHui - dernier)
+            /
+            (1000*60*60*24)
         );
 
-        return difference > 15;
+        return jours > 15;
 
     });
 
-    const surveillance = document.getElementById("surveillance");
+    document.getElementById(
+        "surveillance"
+    ).innerHTML =
 
-    if (surveillance) {
-        surveillance.innerHTML = "";
+    agentsASurveiller.length
 
-        agentsASurveiller.forEach(a => {
-            surveillance.innerHTML += `
-                <p>
-                    ⚠️ <b>${a.nom}</b>
-                    (${a.dernierExamen || "Aucun examen"})
-                </p>
-            `;
-        });
-    }
+    ?
 
-    document.getElementById("stats").innerHTML =
-    `
-    Total examinateurs : ${agents.length}<br>
-    Total examens : ${agents.reduce((t,a)=>t+a.examens,0)}
-    `;
+    agentsASurveiller.map(a =>
 
-const recommandations =
-[...agents]
-.sort((a,b)=>{
+        `<p>
+        ⚠️ ${a.matricule}
+        (${a.dernierExamen || "Jamais"})
+        </p>`
 
-if(!a.dernierExamen) return -1;
-if(!b.dernierExamen) return 1;
+    ).join("")
 
-const dateA =
-new Date(
-a.dernierExamen.split("/").reverse().join("-")
-);
+    :
 
-const dateB =
-new Date(
-b.dernierExamen.split("/").reverse().join("-")
-);
+    "<p>✅ Aucun</p>";
 
-return dateA - dateB;
+    const recommandations =
+    [...agents]
+    .sort((a,b)=>{
 
-})
-.slice(0,3);
+        if(!a.dernierExamen)
+        return -1;
 
-document.getElementById("suggestions").innerHTML =
-recommandations
-.map((a,i)=>`
+        if(!b.dernierExamen)
+        return 1;
 
-<p>
-<b>🥇 #${i+1} - ${a.nom}</b><br>
-Examens : ${a.examens}<br>
-Dernier examen :
-${a.dernierExamen || "Jamais"}
-</p>
+        const dateA =
+        new Date(
+            a.dernierExamen
+            .split("/")
+            .reverse()
+            .join("-")
+        );
 
-`)
-.join("");
+        const dateB =
+        new Date(
+            b.dernierExamen
+            .split("/")
+            .reverse()
+            .join("-")
+        );
 
-    document.getElementById("historique").innerHTML =
+        return dateA - dateB;
+
+    })
+    .slice(0,3);
+
+    document.getElementById(
+        "suggestions"
+    ).innerHTML =
+
+    recommandations
+    .map((a,i)=>`
+
+    <p>
+
+    <b>
+    🥇 #${i+1}
+    </b>
+
+    ${a.matricule}
+
+    (${a.discord || "N/A"})
+
+    <br>
+
+    Dernier examen :
+    ${a.dernierExamen || "Jamais"}
+
+    </p>
+
+    `)
+    .join("");
+
+    document.getElementById(
+        "historique"
+    ).innerHTML =
+
     examens
     .slice()
     .reverse()
     .map(e =>
-        `<p>${e.date} - ${e.examinateur} → ${e.candidat}</p>`
+
+    `<p>
+
+    📅 ${e.date}
+
+    <br>
+
+    👮 ${e.examinateur}
+
+    <br>
+
+    👤 ${e.candidat || "-"}
+
+    <br>
+
+    💬 ${e.commentaire || "-"}
+
+    </p>
+
+    <hr>`
+
     )
     .join("");
-    const inactifs =
-agents.filter(a => a.examens === 0);
-
-document.getElementById("inactifs").innerHTML =
-inactifs.length
-? inactifs.map(a =>
-`<p>🔴 ${a.nom}</p>`
-).join("")
-: "<p>✅ Aucun examinateur inactif</p>";
-}
-
-function supprimerAgent(nom){
-
-if(!confirm("Supprimer " + nom + " ?"))
-return;
-
-agents =
-agents.filter(a => a.nom !== nom);
-
-sauvegarder();
 }
 
 afficher();
